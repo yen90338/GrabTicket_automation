@@ -74,7 +74,7 @@ def purchase_ticket(wait, id_number):
         print("身分證輸入完成！")
 
 #         #點選 credit card 付款
-#         driver.find_element(By.NAME, "cardNumberInput").send_keys("5408059519853306") ##指定信用卡
+#         driver.find_element(By.NAME, "cardNumberInput").send_keys("信用卡號") ##指定信用卡
 #         select_month = Select(driver.find_element(By.NAME, "CardMonth"))
 #         select_year = Select(driver.find_element(By.NAME, "CardYear"))
 #         select_month.select_by_visible_text("05")
