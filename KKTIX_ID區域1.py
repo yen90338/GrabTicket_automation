@@ -109,15 +109,15 @@ while True:
                     input_field.send_keys("2")  # 輸入張數
                     # driver.find_element(By.CSS_SELECTOR, ".btn.btn-lg.ng-isolate-scope.btn-primary").click()#下一步
                     next_set.click()
-                    print(f"成功選擇第 {ticket_id} 位置的票")
+                    print(f"✅成功選擇第 {ticket_id} 位置的票")
                     success = True
                     break                
                 else:
-                    print(f"第 {ticket_id} 的位置無票，嘗試下一個...")
+                    print(f"❌第 {ticket_id} 的位置無<input>，嘗試下一個...")
             except Exception:
-                print(f"第 {ticket_id} 的位置已售完，嘗試下一個...")    
+                print(f"❌第 {ticket_id} 的位置已售完，嘗試下一個...")    
         except Exception as e:
-            print(f"第 {ticket_id} 的位置無法選擇，錯誤: {str(e)}")
+            print(f"❌第 {ticket_id} 的位置無法選擇，錯誤: {str(e)}")
     print("迴圈已結束，執行下一步...")
     end_time = time.perf_counter()
     elapsed_time = end_time - start_time
