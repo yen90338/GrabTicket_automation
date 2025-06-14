@@ -19,7 +19,7 @@ options.add_argument("--start-maximized")  # 最大化視窗
 # options.add_argument("--disable-infobars")  # 隱藏「Chrome 正由自動測試軟體控制」的提示
 # options.add_argument('--ignore-certificate-errors')  # 忽略 SSL 錯誤
 # options.add_argument('--ignore-ssl-error')
-# options.add_argument("--incognito")  # 無痕模式
+options.add_argument("--incognito")  # 無痕模式
 prefs = {"profile.managed_default_content_settings.images": 2}
 options.add_experimental_option("prefs", prefs)
 
@@ -96,7 +96,8 @@ while True:
     # 同意條款
     agree = wait.until(EC.presence_of_element_located((By.ID, "person_agree_terms")))
     # agree = driver.find_element(By.ID, "person_agree_terms")
-    agree.click()
+    # agree.click()
+    driver.execute_script("arguments[0].click();",agree)
     next_set = driver.find_element(By.CSS_SELECTOR, ".btn.btn-lg.ng-isolate-scope.btn-primary")
     for ticket_id in ticket_ids: 
         try:
