@@ -83,8 +83,8 @@ def Numconfirm():
     verifyCode_element = driver.find_element(By.ID, "TicketForm_verifyCode") # 驗證碼
     verifyCode_element.click() # 點選驗證碼輸入框
 
-# print("載入驗證頁面...")
-# Verify()
+print("載入驗證頁面...")
+Verify()
 
 # 找到所有 data-id 以 group_ 開頭的 div 元素
 group_elements = wait.until(lambda d: d.find_elements(By.CSS_SELECTOR, 'div[data-id^="group_"]'))
