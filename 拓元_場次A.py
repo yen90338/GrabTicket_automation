@@ -1,35 +1,28 @@
-from selenium import webdriver ##使用chrome的工具
-from selenium.webdriver.common.by import By ##找網站中物件的工具
-from selenium.webdriver.support.ui import WebDriverWait, Select ##按鈕等待、下拉選單選擇的工具
+from selenium import webdriver # 使用chrome的工具
+from selenium.webdriver.common.by import By # 找網站中物件的工具
+from selenium.webdriver.support.ui import WebDriverWait, Select # 按鈕等待、下拉選單選擇的工具
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.alert import Alert
-# from selenium.webdriver.common.keys import Keys
-import time #如果網站沒跑這麼快，可以用sleep去等待一下
+import time # 如果網站沒跑這麼快，可以用sleep去等待一下
 
 start_time = time.perf_counter()
 # 設定 WebDriver
 options = webdriver.ChromeOptions()
-#  防止 Selenium 被網站偵測
+# 防止 Selenium 被網站偵測
 options.add_argument("--disable-blink-features=AutomationControlled")  
 options.add_experimental_option("excludeSwitches", ["enable-automation"])
 options.add_experimental_option("useAutomationExtension", False)
 #  讓瀏覽器更像真實使用者
 options.add_argument("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36")
 options.add_argument("--start-maximized")  # 最大化視窗
-# options.add_argument("--disable-infobars")  # 隱藏「Chrome 正由自動測試軟體控制」的提示
-# options.add_argument('--ignore-certificate-errors')  # 忽略 SSL 錯誤
-# options.add_argument('--ignore-ssl-error')
 options.add_argument("--incognito")
-# prefs = {"profile.managed_default_content_settings.images": 2}# 拓元不能用不載圖片，因為驗證碼會跑不出來
+# prefs = {"profile.managed_default_content_settings.images": 2} # 拓元不能用不載圖片，因為驗證碼會跑不出來
 # options.add_experimental_option("prefs", prefs)
 driver = webdriver.Chrome(options=options)
 driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
 refresh_attempts = 0  # 記錄重整次數
 wait = WebDriverWait(driver, 10,0.5)
-
-# EVENT_URL = "https://truecolormusic.tixcraft.com/activity/game/25_mj116"
-# EVENT_URL = "https://tixcraft.com/ticket/area/25_wubaitp/19126"
 
 EVENT_URL = "https://tixcraft.com/ticket/area/25_maydaytp_c/19583"
 # EVENT_URL = "https://tixcraft.com/ticket/area/25_maydaytp/19568"
@@ -49,63 +42,68 @@ for cookie in cookie_str.split("; "):
         "httpOnly": False
     })
 driver.execute_cdp_cmd("Network.setCookies", {"cookies": cookies})
-driver.execute_cdp_cmd("Page.reload", {}) ##不用reload原因是tixcraft不會偵測是否登入
-# # driver.get(EVENT_URL)
+driver.execute_cdp_cmd("Page.reload", {}) # 用reload原因是tixcraft不會偵測是否登入
 
-def verify():
-    try:
-        verify_wait = WebDriverWait(driver, 5, 0.5)  # 等待驗證頁面載入
-        # 輸入信用卡號
-        print("輸入信用卡號...")
-        # input_creditcard= verify_wait.until(EC.presence_of_element_located((By.NAME, "checkCode")))
-        # input_creditcard.send_keys("428430")  
-        
+def Verify():
+    try:        
         input_creditcard = driver.find_element(By.NAME, "checkCode")
-        driver.execute_script("arguments[0].value = '524255';", input_creditcard)
+        driver.execute_script("arguments[0].value = '524255';", input_creditcard)  # 使用 JavaScript 設定值
         # input_creditcard.send_keys("524255")
         # driver.execute_script("document.getElementsByName('checkCode')[0].value = '524255'")
-        # driver.execute_script("document.querySelector('input[name=\"checkCode\"]')?.value = '524255'")  # 使用 JavaScript 設定值
-        # 點擊送出按鈕
-        print("點擊送出按鈕...")
+        # driver.execute_script("document.querySelector('input[name=\"checkCode\"]')?.value = '524255'")  
+        # print("點擊送出按鈕...")
         submit_button = driver.find_element(By.CSS_SELECTOR, 'button[type="submit"]')
-        driver.execute_script("arguments[0].click();", submit_button) 
+        driver.execute_script("arguments[0].click();", submit_button) # 使用 JavaScript 點擊按鈕
         # submit_button.click()  
-        # driver.execute_script("document.querySelector('button[type=\"submit\"]')?.click();")  # 使用 JavaScript 點擊按鈕
-        # driver.execute_script("arguments[0].click();", submit_button)  # 使用 JavaScript 點擊按鈕
+        # driver.execute_script("document.querySelector('button[type=\"submit\"]')?.click();")
         # 等JS視窗跳出
-        verify_wait.until(EC.alert_is_present())
+        wait.until(EC.alert_is_present())
         alert = Alert(driver)
-        print("彈窗文字:", alert.text)  # 印出提示內容
+        # print("彈窗文字:", alert.text)  # 印出提示內容
         alert.accept()  # 點選「確定」
     except Exception as e:
-        print(f"發生錯誤: {e}")
+        print(f"Verify發生錯誤: {e}")
 
-print("載入驗證頁面...")
-verify()
+def Numconfirm():
+    print('選擇區域成功，開始選擇張數和點擊同意...')
+    select_element =wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, 'select[id^="TicketForm_ticketPrice_"]')))
+    select = Select(select_element)
+    try:
+        select.select_by_visible_text("2")
+    except:
+        last_option_text = select.options[-1].text
+        select.select_by_visible_text(last_option_text)
+    # print("選擇張數成功...")
+    # 等待同意按鈕出現
+    # driver.find_element(By.ID,"TicketForm_agree").click() #點確認checkbox
+    agree = wait.until(EC.element_to_be_clickable((By.ID, 'TicketForm_agree')))  # 點確認checkbox
+    # agree.click()
+    driver.execute_script("arguments[0].click();", agree)
+    # print("同意點擊成功...")
+    verifyCode_element = driver.find_element(By.ID, "TicketForm_verifyCode") # 驗證碼
+    verifyCode_element.click() # 點選驗證碼輸入框
+
+# print("載入驗證頁面...")
+# Verify()
 
 # 找到所有 data-id 以 group_ 開頭的 div 元素
-# wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, 'div[data-id^="group_"]'))) 
-# group_elements = driver.find_elements(By.CSS_SELECTOR, 'div[data-id^="group_"]')  ##找到的話是list屬性需要轉成int，就需要用len()來計算
 group_elements = wait.until(lambda d: d.find_elements(By.CSS_SELECTOR, 'div[data-id^="group_"]'))
-group_count = len(group_elements)
+group_count = len(group_elements)  # 找到的話是list屬性 需要轉成int，就需要用len()來計算
 print(f"共有 {group_count} 個 'group_x' 區塊")
-
 
 while True:
     success = False  # 記錄是否成功搶票
     # 重整頁面
     if refresh_attempts > 0:
-        print(f"第 {refresh_attempts} 次重整頁面...")
+        print(f"所有位置都已售完，第 {refresh_attempts} 次重整頁面...")
         driver.refresh()
-        time.sleep(1.5)
+        time.sleep(1)
     print("開始選擇區域...")
-    for i in range(1, group_count):  # 嘗試前10個ul（可視實際數量調整）
+    for i in range(1, group_count):  # 用fullxpath才能選擇區域（可視實際數量調整）
         ul_xpath = f"/html/body/div[2]/div[1]/div[3]/div/div/div/div[2]/div[2]/ul[{i}]"
         try:
-            # ul = driver.find_element(By.XPATH, ul_xpath)
             ul = wait.until(EC.presence_of_element_located((By.XPATH, ul_xpath)))
             li_elements = ul.find_elements(By.TAG_NAME, "li")
-
             for j, li in enumerate(li_elements):
                 try:
                     a_tag = li.find_element(By.TAG_NAME, "a")
@@ -115,7 +113,7 @@ while True:
                         success = True
                         break
                 except:
-                    print(f"❌ ul[{i}] → li[{j+1}] 無 <a>，跳過")
+                    # print(f"❌ ul[{i}] → li[{j+1}] 無 <a>，跳過")
                     continue
             if success:
                 break
@@ -125,25 +123,7 @@ while True:
             break  # 若ul不存在就跳出外層迴圈
     if success:
         try:
-            print('選擇區域成功，開始選擇張數...')
-            select_element =wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, 'select[id^="TicketForm_ticketPrice_"]')))
-            select = Select(select_element)
-            # select = Select(driver.find_element(By.ID, "TicketForm_ticketPrice_02"))
-            try:
-                select.select_by_visible_text("2")
-            except:
-                last_option_text = select.options[-1].text
-                select.select_by_visible_text(last_option_text)
-            print("選擇張數成功...")
-            # 等待同意按鈕出現
-            # driver.find_element(By.ID,"TicketForm_agree").click() #點確認checkbox
-            # verifyCode_element = driver.find_element(By.ID, "TicketForm_verifyCode")#驗證碼
-            agree = wait.until(EC.element_to_be_clickable((By.ID, 'TicketForm_agree')))
-            # agree.click()
-            driver.execute_script("arguments[0].click();", agree)
-            print("同意點擊成功...")
-            verifyCode_element = driver.find_element(By.ID, "TicketForm_verifyCode")#驗證碼
-            verifyCode_element.click() #點選驗證碼輸入框
+            Numconfirm()
             end_time = time.perf_counter()
             elapsed_time = end_time - start_time
             print(f"程式執行時間: {elapsed_time:.4f} 秒")
@@ -154,5 +134,5 @@ while True:
             input("發生錯誤❌，請手動關閉瀏覽器")
             break
     else:
-        print("所有位置都已售完，重新整理頁面繼續嘗試...")
+        # print("所有位置都已售完，重新整理頁面繼續嘗試...")
         refresh_attempts += 1  # 記錄重整次數
