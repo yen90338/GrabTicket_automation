@@ -45,7 +45,7 @@ for cookie in cookie_str.split("; "):
 driver.execute_cdp_cmd("Network.setCookies", {"cookies": cookies})
 driver.execute_cdp_cmd("Page.reload", {}) # 用reload原因是tixcraft不會偵測是否登入
 
-def Verify():
+def Verify(): # 需要輸入驗證才需要的函式
     try:        
         input_creditcard = driver.find_element(By.NAME, "checkCode")
         driver.execute_script("arguments[0].value = '524255';", input_creditcard)  # 使用 JavaScript 設定值
