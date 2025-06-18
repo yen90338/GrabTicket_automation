@@ -23,8 +23,9 @@ driver = webdriver.Chrome(options=options)
 driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
 refresh_attempts = 0  # 記錄重整次數
 wait = WebDriverWait(driver, 10,0.5)
-
-EVENT_URL = "https://tixcraft.com/ticket/area/25_maydaytp_c/19583"
+# Tixcraft_活動網址 
+EVENT_URL = "Tixcraft_活動網址"
+# EVENT_URL = "https://tixcraft.com/ticket/area/25_maydaytp_c/19583"
 # EVENT_URL = "https://tixcraft.com/ticket/area/25_maydaytp/19568"
 driver.get(EVENT_URL)
 
@@ -116,10 +117,10 @@ while True:
                     # print(f"❌ ul[{i}] → li[{j+1}] 無 <a>，跳過")
                     continue
             if success:
-                break
-        except:
+                break # 成功點擊後，不再嘗試其他 group，直接跳出 i 的迴圈
+        except Exception as e:
             # 若ul不存在就跳出外層迴圈
-            print(f"無座位ul: {i}，準備Refresh...")
+            print(f"無座位ul: {i}，準備Refresh...，錯誤: {str(e)}")
             break  # 若ul不存在就跳出外層迴圈
     if success:
         try:
